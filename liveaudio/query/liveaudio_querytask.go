@@ -11,7 +11,6 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	simplejson "github.com/bitly/go-simplejson"
 	"github.com/tjfoc/gmsm/sm3"
@@ -33,7 +32,7 @@ const (
 	businessId = "your_business_id" //业务ID，易盾根据产品业务特点分配
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check(params url.Values) *simplejson.Json {
 	params["secretId"] = []string{secretId}
 	params["businessId"] = []string{businessId}
@@ -57,7 +56,7 @@ func check(params url.Values) *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
@@ -88,43 +87,43 @@ func main() {
 	}
 
 	ret := check(params)
-
-	code, _ := ret.Get("code").Int()
-	message, _ := ret.Get("msg").String()
-	if code == 200 {
-		resultArray, _ := ret.Get("result").Array()
-		if len(resultArray) == 0 {
-			fmt.Printf("暂时没有结果需要获取, 请稍后重试!")
-		} else {
-			for _, result := range resultArray {
-				if resultMap, ok := result.(map[string]interface{}); ok {
-					taskId := resultMap["taskId"].(string)
-					//asrStatus, _ := resultMap["asrStatus"].(json.Number).Int64()
-					action, _ := resultMap["action"].(json.Number).Int64()
-					segmentArray := resultMap["segments"].([]interface{})
-					startTime, _ := resultMap["startTime"].(json.Number).Int64()
-					endTime, _ := resultMap["endTime"].(json.Number).Int64()
-					if action == 0 {
-						fmt.Printf("taskId=%s, 结果: 通过, 证据信息如下: %s, startTime:%d, endTime:%d", taskId, segmentArray, startTime, endTime)
-					} else if action == 1 || action == 2 {
-						for _, segmentItem := range segmentArray {
-							if segmentItemMap, ok := segmentItem.(map[string]interface{}); ok {
-								_, _ = segmentItemMap["label"].(json.Number).Int64()
-								_, _ = segmentItemMap["level"].(json.Number).Int64()
-								var printString string
-								if action == 1 {
-									printString = "不确定"
-								} else {
-									printString = "不通过"
-								}
-								fmt.Printf("taskId=%s, 结果: %s，证据信息如下: %s, startTime:%d, endTime:%d", taskId, printString, segmentArray, startTime, endTime)
-							}
-						}
-					}
-				}
-			}
-		}
-	} else {
-		fmt.Printf("ERROR: code=%d, msg=%s", code, message)
-	}
+	fmt.Print(ret)
+	//code, _ := ret.Get("code").Int()
+	//message, _ := ret.Get("msg").String()
+	//if code == 200 {
+	//	resultArray, _ := ret.Get("result").Array()
+	//	if len(resultArray) == 0 {
+	//		fmt.Printf("暂时没有结果需要获取, 请稍后重试!")
+	//	} else {
+	//		for _, result := range resultArray {
+	//			if resultMap, ok := result.(map[string]interface{}); ok {
+	//				taskId := resultMap["taskId"].(string)
+	//				//asrStatus, _ := resultMap["asrStatus"].(json.Number).Int64()
+	//				action, _ := resultMap["action"].(json.Number).Int64()
+	//				segmentArray := resultMap["segments"].([]interface{})
+	//				startTime, _ := resultMap["startTime"].(json.Number).Int64()
+	//				endTime, _ := resultMap["endTime"].(json.Number).Int64()
+	//				if action == 0 {
+	//					fmt.Printf("taskId=%s, 结果: 通过, 证据信息如下: %s, startTime:%d, endTime:%d", taskId, segmentArray, startTime, endTime)
+	//				} else if action == 1 || action == 2 {
+	//					for _, segmentItem := range segmentArray {
+	//						if segmentItemMap, ok := segmentItem.(map[string]interface{}); ok {
+	//							_, _ = segmentItemMap["label"].(json.Number).Int64()
+	//							_, _ = segmentItemMap["level"].(json.Number).Int64()
+	//							var printString string
+	//							if action == 1 {
+	//								printString = "不确定"
+	//							} else {
+	//								printString = "不通过"
+	//							}
+	//							fmt.Printf("taskId=%s, 结果: %s，证据信息如下: %s, startTime:%d, endTime:%d", taskId, printString, segmentArray, startTime, endTime)
+	//						}
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//} else {
+	//	fmt.Printf("ERROR: code=%d, msg=%s", code, message)
+	//}
 }

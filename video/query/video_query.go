@@ -33,7 +33,7 @@ const (
 	businessId = "your_business_id" //业务ID，易盾根据产品业务特点分配
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check(params url.Values) *simplejson.Json {
 	params["secretId"] = []string{secretId}
 	params["businessId"] = []string{businessId}
@@ -57,7 +57,7 @@ func check(params url.Values) *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
@@ -93,25 +93,26 @@ func main() {
 		resultArray, _ := ret.Get("result").Array()
 		for _, result := range resultArray {
 			if resultMap, ok := result.(map[string]interface{}); ok {
-				if resultMap["antispam"] != nil {
-					antispam, _ := resultMap["antispam"].(map[string]interface{})
-					status, _ := antispam["status"].(json.Number).Int64()
-					if status != 0 {
-						fmt.Printf("视频异常, status: %d", status)
-						continue
-					}
-					//taskId, _ := antispam["taskId"].(string)
-					//callback, _ := antispam["callback"].(string)
-					//pictureArray := resultMap["pictures"].([]interface{})
-					/*for _, picture := range pictureArray {
-						pictureMap, _ := resultMap["picture"].(map[string]interface{})
-						pictureType, _ := pictureMap["type"].(json.Number).Int64()
-						url, _ := pictureMap["url"].(string
-						startTime, _ := pictureMap["startTime"].(json.Number).Int64()
-						endTime, _ := pictureMap["endTime"].(json.Number).Int64()
-						labelArray := resultMap["labels"].([]interface{})
-					}*/
+				//antispam, _ := resultMap["antispam"].(map[string]interface{})
+				status, _ := resultMap["status"].(json.Number).Int64()
+				if status != 0 {
+					fmt.Printf("视频异常, status: %d", status)
+					continue
 				}
+				//if resultMap["antispam"] != nil {
+				//
+				//	//taskId, _ := antispam["taskId"].(string)
+				//	//callback, _ := antispam["callback"].(string)
+				//	//pictureArray := resultMap["pictures"].([]interface{})
+				//	/*for _, picture := range pictureArray {
+				//		pictureMap, _ := resultMap["picture"].(map[string]interface{})
+				//		pictureType, _ := pictureMap["type"].(json.Number).Int64()
+				//		url, _ := pictureMap["url"].(string
+				//		startTime, _ := pictureMap["startTime"].(json.Number).Int64()
+				//		endTime, _ := pictureMap["endTime"].(json.Number).Int64()
+				//		labelArray := resultMap["labels"].([]interface{})
+				//	}*/
+				//}
 			}
 		}
 

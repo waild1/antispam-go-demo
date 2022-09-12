@@ -87,7 +87,6 @@ func main() {
 	params := url.Values{"taskIds": []string{string(jsonString)}}
 
 	ret := check(params)
-
 	code, _ := ret.Get("code").Int()
 	message, _ := ret.Get("msg").String()
 	if code == 200 {
@@ -111,6 +110,8 @@ func main() {
 					fmt.Printf("taskId: %s, callback： %s，文本查询结果: 通过", taskId, callback)
 				} else if action == 2 {
 					fmt.Printf("taskId: %s, callback： %s，文本查询结果: 不通过, 分类信息如下: %s", taskId, callback, labelArray)
+				} else {
+					fmt.Printf("taskId: %s，文本查询结果: 不通过, 分类信息如下: %s", taskId, labelArray)
 				}
 			}
 		}

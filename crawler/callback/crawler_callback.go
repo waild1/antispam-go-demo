@@ -11,7 +11,6 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	simplejson "github.com/bitly/go-simplejson"
 	"github.com/tjfoc/gmsm/sm3"
@@ -32,7 +31,7 @@ const (
 	secretKey = "your_secret_key" //产品私有密钥，服务端生成签名信息使用，请严格保管，避免泄露
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check() *simplejson.Json {
 	params := url.Values{}
 	params["secretId"] = []string{secretId}
@@ -56,7 +55,7 @@ func check() *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
@@ -94,15 +93,15 @@ func main() {
 					if antispam, ok := resultMap["antispam"].(map[string]interface{}); ok {
 						taskId := antispam["taskId"].(string)
 						dataId, _ := antispam["dataId"].(string)
-						suggestion, _ := antispam["suggestion"].(json.Number).Int64()
+						//suggestion, _ := antispam["suggestion"].(json.Number).Int64()
 						var callback string
 						if antispam["callback"] == nil {
 							callback = ""
 						} else {
 							callback = antispam["callback"].(string)
 						}
-						evidences := resultMap["evidences"].(map[string]interface{})
-						fmt.Printf("SUCCESS: dataId=%s, taskId=%s, suggestion=%d, callback=%s, evidences=%s", dataId, taskId, suggestion, callback, evidences)
+						//evidences := resultMap["evidences"].(map[string]interface{})
+						fmt.Printf("SUCCESS: dataId=%s, taskId=%s, callback=%s", dataId, taskId, callback)
 					} else {
 
 					}

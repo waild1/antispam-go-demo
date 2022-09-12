@@ -32,7 +32,7 @@ const (
 	secretKey = "your_secret_key" //产品私有密钥，服务端生成签名信息使用，请严格保管，避免泄露
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check() *simplejson.Json {
 	params := url.Values{}
 	params["secretId"] = []string{secretId}
@@ -56,7 +56,7 @@ func check() *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
@@ -93,12 +93,14 @@ func main() {
 				if resultMap, ok := resultItem.(map[string]interface{}); ok {
 					if antispam, ok := resultMap["antispam"].(map[string]interface{}); ok {
 						_ = antispam["taskId"].(string)
-						_ = antispam["dataId"].(string)
-						_ = antispam["callback"].(string)
-						_, _ = antispam["suggestion"].(json.Number).Int64()
+
+						//_ = antispam["dataId"].(string)
+						//_ = antispam["callback"].(string)
+						//_, _ = antispam["suggestion"].(json.Number).Int64()
 						_, _ = antispam["resultType"].(json.Number).Int64()
-						_, _ = antispam["checkStatus"].(json.Number).Int64()
-						if resultMap["evidences"] != nil {
+
+						if antispam["evidences"] != nil {
+							_, _ = antispam["checkStatus"].(json.Number).Int64()
 							evidences, _ := antispam["evidences"].(map[string]interface{})
 							if evidences["texts"] != nil {
 								texts := evidences["texts"].([]interface{})
@@ -110,6 +112,7 @@ func main() {
 									}
 								}
 							} else if evidences["images"] != nil {
+								_, _ = antispam["checkStatus"].(json.Number).Int64()
 								images := evidences["images"].([]interface{})
 								for _, imageItem := range images {
 									if imageMap, ok := imageItem.(map[string]interface{}); ok {
@@ -120,6 +123,7 @@ func main() {
 									}
 								}
 							} else if evidences["audios"] != nil {
+								_, _ = antispam["checkStatus"].(json.Number).Int64()
 								audios := evidences["audios"].([]interface{})
 								for _, audioItem := range audios {
 									if audioMap, ok := audioItem.(map[string]interface{}); ok {
@@ -130,6 +134,7 @@ func main() {
 									}
 								}
 							} else if evidences["audiovideos"] != nil {
+								_, _ = antispam["checkStatus"].(json.Number).Int64()
 								audiovideos := evidences["audiovideos"].([]interface{})
 								for _, audiovideoItem := range audiovideos {
 									if audiovideoMap, ok := audiovideoItem.(map[string]interface{}); ok {
@@ -139,6 +144,7 @@ func main() {
 									}
 								}
 							} else if evidences["files"] != nil {
+								_, _ = antispam["checkStatus"].(json.Number).Int64()
 								files := evidences["files"].([]interface{})
 								for _, fileItem := range files {
 									if fileMap, ok := fileItem.(map[string]interface{}); ok {

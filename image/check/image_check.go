@@ -33,7 +33,7 @@ const (
 	businessId = "your_business_id" //业务ID，易盾根据产品业务特点分配
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check(params url.Values) *simplejson.Json {
 	params["secretId"] = []string{secretId}
 	params["businessId"] = []string{businessId}
@@ -57,7 +57,7 @@ func check(params url.Values) *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
@@ -127,8 +127,13 @@ func main() {
 								label, _ := labelItemMap["label"].(json.Number).Int64()
 								level, _ := labelItemMap["level"].(json.Number).Int64()
 								rate, _ := labelItemMap["rate"].(json.Number).Float64()
-								subLabels := labelItemMap["subLabels"].([]interface{})
-								fmt.Printf("label: %d, level: %d, rate: %f, subLabels: %s", label, level, rate, subLabels)
+								if labelItemMap["subLabels"] != nil {
+									subLabels := labelItemMap["subLabels"].([]interface{})
+									fmt.Printf("label: %d, level: %d, rate: %f, subLabels: %s", label, level, rate, subLabels)
+								} else {
+									fmt.Printf("label: %d, level: %d, rate: %f", label, level, rate)
+								}
+
 							}
 						}
 						if suggestion == 0 {

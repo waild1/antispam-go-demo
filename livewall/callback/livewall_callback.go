@@ -33,7 +33,7 @@ const (
 	businessId = "your_business_id" //业务ID，易盾根据产品业务特点分配
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check() *simplejson.Json {
 	params := url.Values{}
 	params["secretId"] = []string{secretId}
@@ -58,7 +58,7 @@ func check() *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
@@ -139,19 +139,24 @@ func main() {
 				if resultMap, ok := result.(map[string]interface{}); ok {
 					taskId := resultMap["taskId"].(string)
 					callback := resultMap["callback"].(string)
-					dataId := resultMap["dataId"].(string)
-					status, _ := resultMap["status"].(json.Number).Int64()
-					fmt.Printf("taskId:%s, dataId:%s, callback:%s, status:%d", taskId, dataId, callback, status)
+					if resultMap["dataId"] != nil {
+						dataId := resultMap["dataId"].(string)
+						status, _ := resultMap["status"].(json.Number).Int64()
+						fmt.Printf("taskId:%s, dataId:%s, callback:%s, status:%d", taskId, dataId, callback, status)
 
-					evidences, _ := resultMap["evidences"].(map[string]interface{})
-					reviewEvidences, _ := resultMap["reviewEvidences"].(map[string]interface{}) //status, _ := resultMap["status"].(json.Number).Int64()
-					if evidences != nil {
-						parseMachine(evidences, taskId)
-					} else if reviewEvidences != nil {
-						parseHuman(reviewEvidences, taskId)
+						evidences, _ := resultMap["evidences"].(map[string]interface{})
+						reviewEvidences, _ := resultMap["reviewEvidences"].(map[string]interface{}) //status, _ := resultMap["status"].(json.Number).Int64()
+						if evidences != nil {
+							parseMachine(evidences, taskId)
+						} else if reviewEvidences != nil {
+							parseHuman(reviewEvidences, taskId)
+						} else {
+							fmt.Printf("Invalid Result: %s", result)
+						}
 					} else {
-						fmt.Printf("Invalid Result: %s", result)
+						fmt.Printf("taskId:%s", taskId)
 					}
+
 				}
 			}
 		}

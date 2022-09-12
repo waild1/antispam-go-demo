@@ -26,13 +26,13 @@ import (
 )
 
 const (
-	apiUrl    = "http://as.dun.163.com/v2/mediasolution/submit"
-	version   = "v2.0"
+	apiUrl    = "http://as.dun.163.com/v1/mediasolution/submit"
+	version   = "v1.1"
 	secretId  = "your_secret_id"  //产品密钥ID，产品标识
 	secretKey = "your_secret_key" //产品私有密钥，服务端生成签名信息使用，请严格保管，避免泄露
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check(params url.Values) *simplejson.Json {
 	params["secretId"] = []string{secretId}
 	params["version"] = []string{version}
@@ -55,7 +55,7 @@ func check(params url.Values) *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
@@ -120,8 +120,13 @@ func main() {
 		result, _ := ret.Get("result").Map()
 		if antispam, ok := result["antispam"].(map[string]interface{}); ok {
 			taskId := antispam["taskId"].(string)
-			dataId := antispam["dataId"].(string)
-			fmt.Printf("SUBMIT SUCCESS: taskId=%s, dataId=%s", taskId, dataId)
+			if antispam["dataId"] != nil {
+				dataId := antispam["dataId"].(string)
+				fmt.Printf("SUBMIT SUCCESS: taskId=%s, dataId=%s", taskId, dataId)
+			} else {
+				fmt.Printf("SUBMIT SUCCESS: taskId=%s", taskId)
+			}
+
 		}
 	} else {
 		fmt.Printf("ERROR: code=%d, msg=%s", code, message)

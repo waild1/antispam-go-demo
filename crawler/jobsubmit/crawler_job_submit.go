@@ -11,6 +11,7 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	simplejson "github.com/bitly/go-simplejson"
 	"github.com/tjfoc/gmsm/sm3"
@@ -31,7 +32,7 @@ const (
 	secretKey = "your_secret_key" //产品私有密钥，服务端生成签名信息使用，请严格保管，避免泄露
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check(params url.Values) *simplejson.Json {
 	params["secretId"] = []string{secretId}
 	params["version"] = []string{version}
@@ -54,7 +55,7 @@ func check(params url.Values) *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
@@ -88,14 +89,14 @@ func main() {
 	}
 
 	ret := check(params)
-
 	code, _ := ret.Get("code").Int()
 	message, _ := ret.Get("msg").String()
 	if code == 200 {
 		result, _ := ret.Get("result").Map()
-		jobId := result["jobId"].(int64)
-		dataId := result["dataId"].(string)
-		fmt.Printf("SUBMIT SUCCESS: jobId=%s, dataId=%s", jobId, dataId)
+		jobId := result["jobId"].(json.Number)
+		_ = jobId
+		//dataId := result["dataId"].(string)
+		fmt.Printf("SUBMIT SUCCESS: jobId=%s", jobId)
 	} else {
 		fmt.Printf("ERROR: code=%d, msg=%s", code, message)
 	}

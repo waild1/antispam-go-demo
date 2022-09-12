@@ -32,7 +32,7 @@ const (
 	businessId = "your_business_id" //业务ID，易盾根据产品业务特点分配
 )
 
-//请求易盾接口
+// 请求易盾接口
 func check() *simplejson.Json {
 	params := url.Values{}
 	params["secretId"] = []string{secretId}
@@ -57,7 +57,7 @@ func check() *simplejson.Json {
 	return result
 }
 
-//生成签名信息
+// 生成签名信息
 func genSignature(params url.Values) string {
 	var paramStr string
 	keys := make([]string, 0, len(params))
